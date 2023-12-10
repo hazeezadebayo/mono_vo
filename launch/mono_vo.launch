@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+
+<launch>
+
+    <arg name="ar_tags_info" default="['150', '110', '150']" />  <!-- __/\__ ==> __ang1 / ang2 \ ang3__ ==> ['x', 'y', 'z'] ==> ['150', '110', '150'] -->
+
+    <node name="mono_vo_node" pkg="mono_vo" type="mono_vo_node.py" output="screen">
+        <param name="ar_tags_info" value="$(arg ar_tags_info)" />
+    </node>
+
+</launch>
+
+
+
+
