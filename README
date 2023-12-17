@@ -2,7 +2,7 @@ Monocular Visual-Inertial odometry (VIO) with aruco qr tag localizer for ROS2 (s
 ===============================
 
 
-This package provides ros2 estimates the state (pose) of an agent (e.g., a robot) by using only the input of one camera - hence mono- plus one Inertial Measurement Unit (IMU) attached to it - in our case built into the camera 'realsense'-. Here is how:
+This ros2 package estimates the state (pose) of an agent (e.g., a robot) by using only the input of one camera - hence mono- plus one Inertial Measurement Unit (IMU) attached to it - in our case built into the camera 'realsense'-. Here is how:
 
 Feature Detection: This is the process of identifying points of interest within an image. These points, also known as features, are typically parts of an image that have unique characteristics and are easily distinguishable. Examples of feature detectors include SIFT, SURF, ORB, and Shi-Tomasi corner detector.
 
