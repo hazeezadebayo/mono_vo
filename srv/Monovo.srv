@@ -1,4 +1,0 @@
-int8 tag_id
----
-bool status
-string message
