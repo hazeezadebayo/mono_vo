@@ -1,23 +1,80 @@
-Monocular visual odometry with aruco based based localizer for robot pose estimation (currently not working -- still maintained)
+Monocular Visual-Inertial odometry (VIO) with aruco qr tag localizer for ROS2 (still maintained)
 ===============================
 
-cant decide if it should be a ros1 package or ros2 package.
+
+This package provides ros2 estimates the state (pose) of an agent (e.g., a robot) by using only the input of one camera - hence mono- plus one Inertial Measurement Unit (IMU) attached to it - in our case built into the camera 'realsense'-. Here is how:
+
+Feature Detection: This is the process of identifying points of interest within an image. These points, also known as features, are typically parts of an image that have unique characteristics and are easily distinguishable. Examples of feature detectors include SIFT, SURF, ORB, and Shi-Tomasi corner detector.
+
+Feature Matching: Once features have been detected in multiple images, the next step is to find matches between these features. This involves comparing a feature in one image with all features in the other image and finding the most similar one. The output of this step is a set of pairs of matching features. Examples of feature matchers include BFMatcher and FLANN.
+
+Feature Tracking (Optical Flow): This is the process of locating a feature in one image and then finding that same feature in another image. In other words, it involves tracking the “motion” of features from one image to another. The output of this step is the new locations of the features in the second image. Examples of feature trackers include Lucas-Kanade method (used in KLT_featureTracking) and Farneback method.
+
+Here’s how they are integrated into the pipeline:
+
+- `Detect Matches`: Detect features in both the current and the previous frame using any feature detector of your choice within the code.
+
+- `Match Features`: Use a feature matcher to find correspondences between the features detected in the two frames. This will give you a set of matching feature pairs.
+
+- `Filter Matches`: Filter the matches to retain only the good ones. This could be done based on the distance of the matches (as returned by the matcher) or using a geometric constraint (like the epipolar constraint enforced by the fundamental matrix).
+
+- `Track Features`: Use the KLT tracker (or another feature tracker) to track the matched features from the previous frame to the current frame. This will give you the motion of the features.
+
+- `Estimate Motion`: Use the tracked feature correspondences to estimate the camera motion (i.e., the essential matrix and the pose).
+
+Drawback is that this is somewhat slow as the code is written in python - in the future i might consider re-writing in c++ -.
+
+
+
+
+Requirements:
+```bash
+# step 0: install ubuntu 20 and the ros noetic distro
+# $ sudo apt install -y blah blah blah
+sudo apt install ros-$ROS_DISTRO-cv-bridge
+pip3 install opencv-contrib-python
+```
 
 Folder structure:
 ```bash
-mono_vo/
+v_dock/
 ├── CMakeLists.txt
 ├── package.xml
-├── setup.py
+└── mono_vo/
+    ├── __init__.py 
 └── scripts/
-    ├── mono_vo_node.py 
-    └── mono_vo/
-        └── mono_vo_.py
+    ├── mono_vl_node.py # aruco localizer node 
+    ├── mono_vo_node.py  # visual odometry node
+    ├── mono_vimu_node.py  # imu node for fusion (output node) !! not yet written
 └── srv/
-    └── Monovo.srv
+    └── Monovo.srv # undecided what i want to use it for yet
+```
+
+Publishers:
+```bash
+[1] /pose
 ```
 
 
+Subscribers:
+```bash
+[1] /image_raw_topic
+[2] /depth_image_topic
+[3] /camera_info
+```
 
 
+Usage:
+- Firstly, blah blah ...
 
+Terminal 1:
+```bash
+$ source /opt/ros/$ROS_DISTRO/setup.bash
+$ cd $package_ws/src
+$ git clone <this package url>
+$ cd ..
+$ colcon build 
+$ source install/setup.sh
+$ ros2 run mono_vo mono_vo_node.py
+# 
+```
